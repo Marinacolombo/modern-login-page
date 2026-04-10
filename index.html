@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Nexus | Modern Login</title>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #2d3b4f 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    /* subtle animated bg overlay */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* main card */
+    .login-container {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(0px);
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeSlideUp 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    .login-container:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 30px 50px -15px rgba(0, 0, 0, 0.4);
+    }
+
+    /* inner padding */
+    .form-wrapper {
+      padding: 2rem 2rem 2.2rem;
+    }
+
+    /* header */
+    .brand {
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+    .brand h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      background: linear-gradient(130deg, #1e293b, #3b82f6);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+    .brand p {
+      color: #5b6e8c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+
+    /* input groups */
+    .input-group {
+      margin-bottom: 1.4rem;
+      position: relative;
+    }
+
+    .input-icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon i {
+      position: absolute;
+      left: 1rem;
+      color: #94a3b8;
+      font-size: 1.1rem;
+      transition: color 0.2s;
+      pointer-events: none;
+    }
+
+    .input-icon input {
+      width: 100%;
+      padding: 0.9rem 1rem 0.9rem 2.8rem;
+      font-size: 1rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 1.5rem;
+      background: #ffffff;
+      outline: none;
+      transition: all 0.25s ease;
+      font-weight: 500;
+      color: #0f172a;
+    }
+
+    .input-icon input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
+    }
+
+    .input-icon input:focus + i {
+      color: #3b82f6;
+    }
+
+    /* password toggle inside */
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #64748b;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+      z-index: 2;
+    }
+    .password-toggle:hover {
+      color: #1e293b;
+    }
+
+    /* error messages */
+    .error-msg {
+      font-size: 0.75rem;
+      color: #e11d48;
+      margin-top: 0.4rem;
+      margin-left: 0.8rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .error-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .error-msg i {
+      font-size: 0.7rem;
+    }
+
+    /* row: remember & forgot */
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 1rem 0 1.8rem 0;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      color: #334155;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .checkbox-label input {
+      width: 1rem;
+      height: 1rem;
+      accent-color: #3b82f6;
+      cursor: pointer;
+    }
+    .forgot-link {
+      font-size: 0.85rem;
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .forgot-link:hover {
+      color: #1e40af;
+      text-decoration: underline;
+    }
+
+    /* login button */
+    .login-btn {
+      width: 100%;
+      background: linear-gradient(95deg, #2563eb, #1e40af);
+      border: none;
+      padding: 0.9rem 0;
+      border-radius: 2rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+      margin-bottom: 1.8rem;
+    }
+    .login-btn i {
+      font-size: 1rem;
+      transition: transform 0.2s;
+    }
+    .login-btn:hover {
+      background: linear-gradient(95deg, #1d4ed8, #0f2b6d);
+      transform: scale(1.01);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
+    }
+    .login-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* loading spinner state */
+    .login-btn.loading {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+    .spinner {
+      width: 1.2rem;
+      height: 1.2rem;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.75rem;
+      margin: 1.5rem 0 1.2rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .divider span {
+      margin: 0 0.8rem;
+      font-weight: 500;
+    }
+
+    /* social buttons */
+    .social-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .social-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      background: #f1f5f9;
+      border: none;
+      padding: 0.7rem 0;
+      border-radius: 2rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1e293b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .social-btn i {
+      font-size: 1.1rem;
+    }
+    .social-btn.google:hover {
+      background: #eef2ff;
+      color: #db4437;
+      transform: translateY(-2px);
+    }
+    .social-btn.facebook:hover {
+      background: #eef2ff;
+      color: #1877f2;
+      transform: translateY(-2px);
+    }
+
+    /* responsiveness */
+    @media (max-width: 500px) {
+      .form-wrapper {
+        padding: 1.5rem;
+      }
+      .brand h1 {
+        font-size: 1.7rem;
+      }
+      .login-btn {
+        padding: 0.8rem 0;
+      }
+    }
+
+    /* fade + slide animation */
+    @keyframes fadeSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* small feedback */
+    .success-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      background: #0f172aee;
+      backdrop-filter: blur(8px);
+      color: white;
+      padding: 0.8rem 1.8rem;
+      border-radius: 60px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+    }
+    .success-toast.show-toast {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="form-wrapper">
+    <div class="brand">
+      <h1><i class="fas fa-shield-alt" style="font-size: 1.6rem; background: none; -webkit-background-clip: unset; color: #3b82f6;"></i> Nexus</h1>
+      <p>Sign in to your account</p>
+    </div>
+
+    <!-- login form -->
+    <form id="loginForm" novalidate>
+      <!-- Email field -->
+      <div class="input-group">
+        <div class="input-icon">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="email" placeholder="Email address" autocomplete="email">
+        </div>
+        <div class="error-msg" id="emailError">
+          <i class="fas fa-exclamation-circle"></i> <span></span>
+        </div>
+      </div>
+
+      <!-- Password field with show toggle -->
+      <div class="input-group">
+        <div class="input-icon">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+          <button type="button" class="password-toggle" id="togglePasswordBtn" aria-label="Show password">
+            <i class="far fa-eye-slash" id="toggleIcon"></i>
+          </button>
+        </div>
+        <div class="error-msg" id="passwordError">
+          <i class="fas fa-exclamation-circle"></i> <span></span>
+        </div>
+      </div>
+
+      <!-- Remember me & forgot pass -->
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input type="checkbox" id="rememberMe"> Remember Me
+        </label>
+        <a href="#" id="forgotPasswordLink" class="forgot-link">Forgot Password?</a>
+      </div>
+
+      <!-- Login button with loading spinner effect -->
+      <button type="submit" class="login-btn" id="loginButton">
+        <span>Sign In</span>
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </form>
+
+    <!-- divider & social login optional -->
+    <div class="divider">
+      <span>or continue with</span>
+    </div>
+    <div class="social-buttons">
+      <button class="social-btn google" id="googleBtn">
+        <i class="fab fa-google"></i> Google
+      </button>
+      <button class="social-btn facebook" id="facebookBtn">
+        <i class="fab fa-facebook-f"></i> Facebook
+      </button>
+    </div>
+    <p style="text-align: center; font-size: 0.7rem; margin-top: 1.5rem; color: #64748b;">
+      Demo credentials: user@example.com / any password
+    </p>
+  </div>
+</div>
+
+<!-- dynamic toast container -->
+<div id="toastMessage" class="success-toast"></div>
+
+<script>
+  (function() {
+    // DOM elements
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const emailErrorDiv = document.getElementById('emailError');
+    const passwordErrorDiv = document.getElementById('passwordError');
+    const emailErrorSpan = emailErrorDiv.querySelector('span');
+    const passwordErrorSpan = passwordErrorDiv.querySelector('span');
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginButton');
+    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+    const toggleIcon = document.getElementById('toggleIcon');
+    const rememberCheckbox = document.getElementById('rememberMe');
+    const forgotLink = document.getElementById('forgotPasswordLink');
+    const googleBtn = document.getElementById('googleBtn');
+    const facebookBtn = document.getElementById('facebookBtn');
+
+    // Helper to show error messages under fields
+    function showError(inputElement, errorDiv, message) {
+      const errorSpan = errorDiv.querySelector('span');
+      if (errorSpan) errorSpan.innerText = message;
+      errorDiv.classList.add('show');
+      // add visual red border to input field
+      const inputIconDiv = inputElement.closest('.input-icon');
+      if (inputIconDiv) {
+        inputElement.style.borderColor = '#e11d48';
+        inputElement.style.backgroundColor = '#fff5f5';
+      }
+    }
+
+    function clearError(inputElement, errorDiv) {
+      const errorSpan = errorDiv.querySelector('span');
+      if (errorSpan) errorSpan.innerText = '';
+      errorDiv.classList.remove('show');
+      const inputIconDiv = inputElement.closest('.input-icon');
+      if (inputIconDiv) {
+        inputElement.style.borderColor = '#e2e8f0';
+        inputElement.style.backgroundColor = '#ffffff';
+      }
+    }
+
+    // validate email format
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // core validation: returns true if valid, false otherwise
+    function validateForm() {
+      let isValid = true;
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      // Email validation
+      if (email === "") {
+        showError(emailInput, emailErrorDiv, "Email address is required");
+        isValid = false;
+      } else if (!isValidEmail(email)) {
+        showError(emailInput, emailErrorDiv, "Enter a valid email (e.g., name@domain.com)");
+        isValid = false;
+      } else {
+        clearError(emailInput, emailErrorDiv);
+      }
+
+      // Password validation
+      if (password === "") {
+        showError(passwordInput, passwordErrorDiv, "Password is required");
+        isValid = false;
+      } else {
+        clearError(passwordInput, passwordErrorDiv);
+      }
+
+      return isValid;
+    }
+
+    // Show success alert / toast (simple alert fallback but also modern toast)
+    function showSuccessAlert(message) {
+      // Custom toast instead of native alert for better UX
+      const toast = document.getElementById('toastMessage');
+      toast.innerText = message || "✅ Login successful! Welcome back.";
+      toast.classList.add('show-toast');
+      setTimeout(() => {
+        toast.classList.remove('show-toast');
+      }, 2800);
+      // Also small console log, but avoid double alert
+    }
+
+    // Simulate loading state on button
+    async function simulateLoading(button, duration = 800) {
+      const originalContent = button.innerHTML;
+      button.innerHTML = `<div class="spinner"></div> Signing in...`;
+      button.classList.add('loading');
+      return new Promise(resolve => {
+        setTimeout(() => {
+          if (button) {
+            button.innerHTML = originalContent;
+            button.classList.remove('loading');
+          }
+          resolve();
+        }, duration);
+      });
+    }
+
+    // Handle login submission (with validation + loading + success)
+    async function handleLogin(event) {
+      event.preventDefault();
+
+      // Reset previous inline errors styling (already cleared each validate)
+      if (!validateForm()) {
+        return; // validation failed
+      }
+
+      // Show spinner on button
+      const originalBtnHTML = loginBtn.innerHTML;
+      loginBtn.innerHTML = `<div class="spinner"></div> Signing in...`;
+      loginBtn.classList.add('loading');
+      loginBtn.disabled = true;
+
+      // Simulate network delay for realism (smooth transition)
+      setTimeout(() => {
+        // after "network" call, perform final success
+        const email = emailInput.value.trim();
+        const remember = rememberCheckbox.checked;
+        
+        // If remember me checked, we could store in localStorage (optional feature)
+        if (remember) {
+          localStorage.setItem('rememberedEmail', email);
+          // just for demo we store a flag
+        } else {
+          localStorage.removeItem('rememberedEmail');
+        }
+
+        // Show modern toast success alert
+        showSuccessAlert(`Welcome ${email.split('@')[0]}! Authentication successful.`);
+
+        // Reset button state
+        loginBtn.innerHTML = originalBtnHTML;
+        loginBtn.classList.remove('loading');
+        loginBtn.disabled = false;
+
+        // (Optional: In a real app you'd redirect, here we just reset fields? no, keep as is)
+        // For better UX, we don't clear form, just success feedback.
+        // But also you could trigger a small animation.
+        // Additionally, you can add a small console info
+        console.log("Login valid, remember me:", remember);
+      }, 800);
+    }
+
+    // Toggle password visibility
+    function togglePasswordVisibility() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      // toggle eye icon
+      if (type === 'text') {
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+      } else {
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+      }
+    }
+
+    // Forgot password link: simple alert simulation
+    function handleForgotPassword(e) {
+      e.preventDefault();
+      // gentle message (no error)
+      const toast = document.getElementById('toastMessage');
+      toast.innerText = "📧 Password reset link sent to your email (demo).";
+      toast.classList.add('show-toast');
+      setTimeout(() => toast.classList.remove('show-toast'), 2000);
+    }
+
+    // Social login demo (optional)
+    function socialLogin(provider) {
+      const toast = document.getElementById('toastMessage');
+      toast.innerText = `🔐 ${provider} login demo — would integrate OAuth in real app.`;
+      toast.classList.add('show-toast');
+      setTimeout(() => toast.classList.remove('show-toast'), 2000);
+    }
+
+    // Load remembered email if exists
+    function loadRememberedEmail() {
+      const remembered = localStorage.getItem('rememberedEmail');
+      if (remembered) {
+        emailInput.value = remembered;
+        rememberCheckbox.checked = true;
+      }
+    }
+
+    // Attach realtime field clearing: on input remove error
+    function attachRealtimeClear() {
+      emailInput.addEventListener('input', () => {
+        if (emailErrorDiv.classList.contains('show')) {
+          clearError(emailInput, emailErrorDiv);
+        }
+      });
+      passwordInput.addEventListener('input', () => {
+        if (passwordErrorDiv.classList.contains('show')) {
+          clearError(passwordInput, passwordErrorDiv);
+        }
+      });
+    }
+
+    // Additional validation on blur to give instant feedback
+    function attachBlurValidation() {
+      emailInput.addEventListener('blur', () => {
+        const email = emailInput.value.trim();
+        if (email !== "" && !isValidEmail(email)) {
+          showError(emailInput, emailErrorDiv, "Invalid email format");
+        } else if (email === "") {
+          // don't show required on blur, but keep optional? but we want UX: show if empty but touched? Better show only if needed
+          // but for better UX, if empty and blur, show hint not required strict, but form validation will catch; we'll just clear if not needed.
+          if (email === "") {
+            clearError(emailInput, emailErrorDiv);
+          } else {
+            clearError(emailInput, emailErrorDiv);
+          }
+        } else {
+          clearError(emailInput, emailErrorDiv);
+        }
+      });
+      passwordInput.addEventListener('blur', () => {
+        if (passwordInput.value.trim() === "") {
+          // Not aggressive error, but clean if empty but not submitted
+          // we do not show error on blur unless it was already shown? we keep gentle clear
+          clearError(passwordInput, passwordErrorDiv);
+        } else {
+          clearError(passwordInput, passwordErrorDiv);
+        }
+      });
+    }
+
+    // Add event listeners
+    loginForm.addEventListener('submit', handleLogin);
+    togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
+    forgotLink.addEventListener('click', handleForgotPassword);
+    googleBtn.addEventListener('click', () => socialLogin('Google'));
+    facebookBtn.addEventListener('click', () => socialLogin('Facebook'));
+    
+    // initialize
+    loadRememberedEmail();
+    attachRealtimeClear();
+    attachBlurValidation();
+
+    // small addition: show password toggle also accessible
+    // also handle "forgot" link demo style
+    // for the login button hover, CSS covers it.
+    // Edge: if enter key triggers submit fine
+    // also adjust "showPassword" toggle icon initial state
+    // additional improvement: remove all errors on manual clear
+  })();
+</script>
+</body>
+</html>
